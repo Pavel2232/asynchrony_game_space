@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "asynchrony-game-space"
+version = "0.1.0"
+description = ""
+authors = ["Pavel2232 <106510078+Pavel2232@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "asynchrony_game_space"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+windows-curses = "^2.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
