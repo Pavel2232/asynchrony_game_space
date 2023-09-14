@@ -37,38 +37,24 @@ async def blink(canvas, row, column, symbol='*', offset_tics=0):
         await sleep(tics=3)
 
 
-def get_new_rocket_coordinates(canvas, rocket_frame, rocket_row, rocket_column, rows_direction,
-                               columns_direction, canvas_border_indent, row_speed, column_speed):
-    frame_rows, frame_columns = curses.window.getmaxyx(canvas)
-    row_speed, column_speed = update_speed(row_speed, column_speed, rows_direction, columns_direction)
-    rocket_row += row_speed
-    rocket_column += column_speed
-    rocket_height, rocket_width = get_frame_size(rocket_frame)
-    rocket_row = max(rocket_row, canvas_border_indent)
-    rocket_row = min(rocket_row, frame_rows - rocket_height - canvas_border_indent)
-    rocket_column = max(rocket_column, canvas_border_indent)
-    rocket_column = min(rocket_column, frame_columns - rocket_width - canvas_border_indent)
-    return rocket_row, rocket_column, row_speed, column_speed
-
 
 async def animate_spaceship(canvas, rocket_frames, rocket_column, rocket_row, canvas_border_indent):
     row_speed = column_speed = 0
+    frame_rows, frame_columns = curses.window.getmaxyx(canvas)
     for rocket_frame in cycle(rocket_frames):
-        rows_direction, columns_direction, space_pressed = read_controls(canvas)
-        rocket_row, rocket_column, row_speed, column_speed = get_new_rocket_coordinates(
-            canvas,
-            rocket_frame,
-            rocket_row,
-            rocket_column,
-            rows_direction,
-            columns_direction,
-            canvas_border_indent,
-            row_speed,
-            column_speed
-        )
-        draw_frame(canvas, rocket_row, rocket_column, rocket_frame)
-        await asyncio.sleep(0)
-        draw_frame(canvas, rocket_row, rocket_column, rocket_frame, negative=True)
+        for _ in range(2):
+            rows_direction, columns_direction, space_pressed = read_controls(canvas)
+            row_speed, column_speed = update_speed(row_speed, column_speed, rows_direction, columns_direction)
+            rocket_row += row_speed
+            rocket_column += column_speed
+            rocket_height, rocket_width = get_frame_size(rocket_frame)
+            rocket_row = max(rocket_row, canvas_border_indent)
+            rocket_row = min(rocket_row, frame_rows - rocket_height - canvas_border_indent)
+            rocket_column = max(rocket_column, canvas_border_indent)
+            rocket_column = min(rocket_column, frame_columns - rocket_width - canvas_border_indent)
+            draw_frame(canvas, rocket_row, rocket_column, rocket_frame)
+            await asyncio.sleep(0)
+            draw_frame(canvas, rocket_row, rocket_column, rocket_frame, negative=True)
 
 
 def draw(canvas):
